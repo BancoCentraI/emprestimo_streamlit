@@ -87,9 +87,7 @@ pytest tests/
 kaggle-chatbot-mvp/
 ├─ app/            # Interface com o usuário (Streamlit)
 ├─ core/           # Lógica de negócio (dados, modelos, chatbot)
-├─ configs/        # Arquivos de configuração
 ├─ data/           # Dados brutos, processados e modelos
-├─ tests/          # Testes unitários e de integração
 ├─ docs/           # Documentação (PMC, arquitetura, dados, LGPD, etc.)
 ├─ requirements.txt
 └─ README.md
