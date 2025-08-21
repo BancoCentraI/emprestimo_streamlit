@@ -89,7 +89,6 @@ kaggle-chatbot-mvp/
 ├─ core/           # Lógica de negócio (dados, modelos, chatbot)
 ├─ configs/        # Arquivos de configuração
 ├─ data/           # Dados brutos, processados e modelos
-├─ notebooks/      # Notebooks de exploração (EDA)
 ├─ tests/          # Testes unitários e de integração
 ├─ docs/           # Documentação (PMC, arquitetura, dados, LGPD, etc.)
 ├─ requirements.txt
