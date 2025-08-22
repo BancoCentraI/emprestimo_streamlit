@@ -3,6 +3,8 @@
 MVP educacional para responder perguntas sobre datasets do Kaggle via Streamlit, com treino de modelos simples (regressão logística ou linear) e documentação organizada.
 
 ---
+# Equipe josé anderson, Matheus felipe
+---
 
 ## 📖 Documentação
 
