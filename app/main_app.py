@@ -32,7 +32,7 @@ for key in ["last_task", "last_metrics", "last_importances"]:
 # --------------------------------------------------------------------------------------
 # Sidebar
 # --------------------------------------------------------------------------------------
-st.title("🏦 Kaggle Chatbot — Tema Emprestimos")
+st.title("🏦 Kaggle Chatbot — Tema Empréstimos")
 
 with st.sidebar:
     st.header("Configurações")
@@ -53,8 +53,7 @@ with tab_train:
         st.write("Prévia dos dados", df.head())
 
         # Remover colunas irrelevantes
-        drop_cols = [c for c in ["Loan_ID"] if c in df.columns]
-        df = df.drop(columns=drop_cols)
+        df = df.drop(columns=["Loan_ID"], errors="ignore")
 
         if task.startswith("Classificação"):
             target = "Loan_Status"
