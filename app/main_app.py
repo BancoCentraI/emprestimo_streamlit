@@ -64,7 +64,7 @@ with st.sidebar:
     # --- Treinar Novo Modelo ---
     st.subheader("Treinar Novo Modelo")
     test_size = st.slider("Tamanho do conjunto de teste (validação)", 0.1, 0.4, 0.2, 0.05)
-    if st.button("Executar Treinamento"):
+    if st.button("Executar Treino"):
         df_train = None
         for file in uploaded_files:
             if "train" in file.name.lower():
@@ -162,9 +162,9 @@ with tab_train:
     if not st.session_state.model_trained:
         st.info("Treine um modelo para ver os resultados.")
     else:
-        st.subheader("📈 Métricas")
+        st.subheader(" Métricas")
         st.json(st.session_state.metrics)
-        st.subheader("🔎 Importâncias")
+        st.subheader(" Importâncias")
         st.dataframe(st.session_state.importances.head(20), use_container_width=True)
 
 with tab_predict:
