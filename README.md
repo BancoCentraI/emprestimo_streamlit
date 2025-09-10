@@ -1,3 +1,11 @@
+#7. Análise de dados de empréstimos financeiros
+Base: Loan Prediction Dataset (link)
+Contexto: Bancos usam dados para prever inadimplência.
+Motivação: Entender fatores que afetam aprovação de crédito.
+Problema: Quais variáveis mais influenciam a concessão de empréstimos?
+
+
+
 # Kaggle Chatbot MVP
 
 MVP educacional para responder perguntas sobre datasets do Kaggle via Streamlit, com treino de modelos simples (regressão logística ou linear) e documentação organizada.
