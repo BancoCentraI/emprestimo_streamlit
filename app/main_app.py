@@ -49,7 +49,7 @@ def convert_df_to_csv(df):
     return df.to_csv(index=False).encode('utf-8')
 
 # --- Título e Sidebar ---
-st.title("🧪 Pipeline de Previsão de Empréstimo")
+st.title("Pipeline de Previsão de Empréstimo")
 
 with st.sidebar:
     st.header("1. Upload dos Dados")
