@@ -255,52 +255,71 @@ with tab_chat:
 # --- Aba Chat RAG ---
 with tab_rag:
     st.header("🤖 Chat RAG — Perguntas com Contexto da Base")
-    
-    # Carrega dataset para contexto
+
+    # Carrega o dataset base (preferência: Train.csv)
     df_rag = next((read_csv_smart(f) for f in uploaded_files if "train" in f.name.lower()), None)
     if df_rag is None and os.path.exists("emprestimos.csv"):
         df_rag = pd.read_csv("emprestimos.csv")
-    
+
     if df_rag is None:
         st.info("Faça upload de Train.csv ou coloque emprestimos.csv para usar o chat RAG.")
     else:
+        # Parâmetros de exibição
         max_ctx_chars = st.slider("Limite do contexto (caracteres)", 500, 12000, 4000, step=500)
         show_rag_ctx = st.checkbox("Mostrar contexto RAG", value=False)
+
+        # Constrói o contexto (resumo estatístico + amostra de dados)
         rag_context = build_rag_context(df_rag, max_chars=max_ctx_chars)
         if show_rag_ctx:
-            with st.expander("Ver contexto RAG"):
+            with st.expander("📊 Ver contexto RAG (resumo da base)"):
                 st.text(rag_context)
 
-        # Render histórico
+        # Inicializa histórico (mantido entre interações)
+        if "rag_messages" not in st.session_state:
+            st.session_state.rag_messages = [
+                {"role": "assistant", "content": "Olá! Eu posso responder perguntas sobre a base de empréstimos com base no contexto gerado."}
+            ]
+
+        # Renderiza histórico
         for msg in st.session_state.rag_messages:
             with st.chat_message(msg["role"]):
                 st.markdown(msg["content"])
 
-        # Input usuário
-        rag_prompt = st.chat_input("Pergunte algo usando RAG")
+        # Entrada do usuário
+        rag_prompt = st.chat_input("Pergunte algo sobre o conjunto de dados ou as variáveis...")
+
         if rag_prompt:
-            st.session_state.rag_messages.append({"role":"user","content": rag_prompt})
-            with st.chat_message("user"):
-                st.markdown(rag_prompt)
+            # Adiciona mensagem do usuário ao histórico
+            st.session_state.rag_messages.append({"role": "user", "content": rag_prompt})
+
+            # Monta as mensagens para o modelo OpenAI
+            messages = [
+                {"role": "system", "content": "Você é um analista financeiro. Use o contexto fornecido para responder perguntas sobre os dados."},
+                {"role": "user", "content": f"Contexto (resumo da base):\n{rag_context}"}
+            ]
+            # Inclui o histórico (user + assistant)
+            for m in st.session_state.rag_messages:
+                if m["role"] in ("user", "assistant"):
+                    messages.append(m)
+
+            # Faz a chamada à API
             client = get_openai_client()
             if client:
                 try:
-                    messages = [
-                        {"role": "system", "content": "Você é um assistente financeiro."},
-                        {"role": "system", "content": f"Contexto:\n{rag_context}"}
-                    ] + [{"role": m["role"], "content": m["content"]} 
-                         for m in st.session_state.rag_messages if m["role"]=="user"]
-                    resp = client.chat.completions.create(
+                    response = client.chat.completions.create(
                         model="gpt-4o-mini",
                         messages=messages,
-                        temperature=0.4
+                        temperature=0.3
                     )
-                    reply = resp.choices[0].message.content
+                    reply = response.choices[0].message.content
                 except Exception as e:
-                    reply = f"⚠️ Erro RAG: {e}"
+                    reply = f"⚠️ Erro ao acessar a OpenAI: {e}"
             else:
-                reply = f"(Fallback) Pergunta: {rag_prompt}\nContexto:\n{rag_context[:1000]}..."
-            
-            st.session_state.rag_messages.append({"role":"assistant","content": reply})
+                # fallback local se não houver OpenAI
+                reply = f"(Sem OpenAI configurado)\nPergunta: {rag_prompt}\n\nContexto:\n{rag_context[:1000]}..."
+
+            # Armazena e exibe resposta
+            st.session_state.rag_messages.append({"role": "assistant", "content": reply})
             with st.chat_message("assistant"):
                 st.markdown(reply)
+            st.rerun()
